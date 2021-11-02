@@ -1,4 +1,5 @@
-﻿using System;
+﻿using exp_6_StateManagement.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -15,12 +16,17 @@ namespace exp_6_StateManagement.Controllers
         1.Client side state management (istemci - tarayıcı arayıcılığıyla- tarayıcısında veri tutma yöntemleri)
           a. Hidden field : <input type="hidden" value="10" />
           b. Cookie : Kullanıcının tarayıcısında veri tutmayı sağlar. //sayfadan sayfaya veri taşır?
-          c. Query String: url'den veri taşımak/tutmak için () // sayfadan sayfaya
+          c. Query String: url'den veri taşımak/tutmak için kullanırız () // sayfadan sayfaya
 
         2. Server side state management 
 
-        a. Session
-        b. Application
+          a. Session : oturum: 20dk timeout. oturumu kapat demesen de mesela 20 dk'da(default) oturumun kapanması.ya da uygulamayı kapatırsanız mevcut sessionlar kapatıır.her sessionda bir id oluşuyor. web.config içinde timeout değiştirilebilir(dk cinsinden).
+
+        <system.web> <sessionState = timeout ="10" /> bu kısım eklenir. </system.web>
+
+          b. Application : Proje çalıştığında application nesneleri oluşur. timeout vb. yoktur; projeyi kapatana kadar yaşarlar. proje kapatıldığında RAM'den silinir.
+
+
 
          */
 
@@ -39,7 +45,7 @@ namespace exp_6_StateManagement.Controllers
             cerez.Expires = DateTime.Now.AddDays(10);  //expire ve domain propertyleri zorunlu değil. yazılmazsa sonsuza kadar tutar.
             //cerez.Domain = "www.bilgeadam.com"; sadece bu domande aktif olur.
             cerez.Values.Add("kullaniciAdi", "nur.ozturk");
-            cerez.Values.Add("parola", "123456");
+            cerez.Values.Add("parola", "123456"); // hasleyip tut bunu. hash, crypto
 
             HttpContext.Response.Cookies.Add(cerez); //http isteğine cevap olarak göndermen lazım!
             #endregion
@@ -76,6 +82,55 @@ namespace exp_6_StateManagement.Controllers
         //2.yöntem
         public ActionResult Hakkimizda(string ad, string soyad, int yas)
         {
+            return View();
+        }
+        #endregion
+
+
+        #region Session
+        //e ticaretteki sepet olayı...serverın ram üzerinde tutuluyor. uygulama kapatıldığında hala seppetekiler duruyosa db'ye atılmış demektir.
+        // kullanıcı oturumu
+
+        public ActionResult OturumAc()
+        {
+            // kullanıcın ekranda username ve passwordünü alarak bunun dbden var olup olmadığını sorgularız.
+            // giriş ve kullanıcının ihtiyaç duyulan bilgileri session üzerine atılır.
+
+            //var mevcutKullanici = _db.Kullanicilar.FirstOrDefault(x => x.KullaniciAdi == model.KullaniciAdi && x.Parola == model.Parola );  DB'den çekseydik.
+            var mevcutKullanici = new Kullanici()
+            {
+                Id=10,
+                Ad= "Nur",
+                Soyad="Öztürk",
+                KullaniciAdi="nur.ozturk",
+                EPosta="laks@aklsd.com",
+                Parola="123456",
+                DogumTarihi= new DateTime(1991, 6, 2)
+            };
+
+            Session["Kullanici"] = mevcutKullanici;  // Session.Add("Kullanici", mevcutKullanici);
+
+            return View();
+        }
+        #endregion
+
+
+        #region Application
+
+        public ActionResult Ornek1()
+        {
+            // bir değerin application'a set edilmesi
+            HttpContext.Application.Add("ziyaretciSayisi", 0);
+            HttpContext.Application["VersiyonBilgisi", "v.1.0.1"];
+            // değerin application'dan alınması
+            var ziyaretciSayisi = HttpContext.Application["ziyaretciSayisi"];
+           
+
+
+            if (ziyaretciSayisi != null)
+            {
+                var ziyaretciSayisiInt = Convert.ToInt32(ziyaretciSayisi);
+            }
             return View();
         }
         #endregion
