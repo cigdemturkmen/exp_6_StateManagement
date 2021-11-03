@@ -13,14 +13,13 @@ namespace exp_6_StateManagement.Controllers
         /*
          State Management: Durum Yönetimi(mülakat sorusu) //
 
-        1.Client side state management (istemci - tarayıcı arayıcılığıyla- tarayıcısında veri tutma yöntemleri)
+        1. Client side state management (istemci - tarayıcı arayıcılığıyla- tarayıcısında veri tutma yöntemleri)
           a. Hidden field : <input type="hidden" value="10" />
-          b. Cookie : Kullanıcının tarayıcısında veri tutmayı sağlar. //sayfadan sayfaya veri taşır?
-          c. Query String: url'den veri taşımak/tutmak için kullanırız () // sayfadan sayfaya
+          b. Cookie : Kullanıcının tarayıcısında veri tutmayı sağlar. //sayfadan sayfaya veri taşır.(aşağıda index'ten login.cshtml'ye username ve psw taşıdı)
+          c. Query String: url'den veri taşımak/tutmak için kullanırız () // sayfadan sayfaya ver taşır.
 
         2. Server side state management 
-
-          a. Session : oturum: 20dk timeout. oturumu kapat demesen de mesela 20 dk'da(default) oturumun kapanması.ya da uygulamayı kapatırsanız mevcut sessionlar kapatıır.her sessionda bir id oluşuyor. web.config içinde timeout değiştirilebilir(dk cinsinden).
+          a. Session (oturum) : 20dk(default) timeout. Oturumu kapat demesen de 20 dk'da oturumun kapanması.ya da uygulamayı kapatırsanız mevcut sessionlar kapatıır.her sessionda bir id oluşuyor. web.config içinde timeout değiştirilebilir(dk cinsinden).
 
         <system.web> <sessionState = timeout ="10" /> bu kısım eklenir. </system.web>
 
@@ -32,23 +31,23 @@ namespace exp_6_StateManagement.Controllers
 
 
         #region Cookie
-        // GET: Home
+        
         public ActionResult Index()
         {
-
             #region Cookie set etmek
-            //if ("beni hatırla" seçildiyse çerez oluştur)
+            //if ("beni hatırla" checkbox'ı checklendiyse çerez oluştur)
             //{
-            //aşağıdaki kodlar buraya kounr.. çerez kaydetmek için sormak zorundasın kullanıcıya, new law.
+            //aşağıdaki kodlar buraya konur.. çerez kaydetmek için sormak zorundasın kullanıcıya, new law.
             //}
             var cerez = new HttpCookie("loginbilgileri");
-            cerez.Expires = DateTime.Now.AddDays(10);  //expire ve domain propertyleri zorunlu değil. yazılmazsa sonsuza kadar tutar.
+            cerez.Expires = DateTime.Now.AddDays(10);  //expire ve domain propertyleri zorunlu değil. yazılmazsa çerez sonsuza kadar tutulur.
             //cerez.Domain = "www.bilgeadam.com"; sadece bu domande aktif olur.
             cerez.Values.Add("kullaniciAdi", "nur.ozturk");
             cerez.Values.Add("parola", "123456"); // hasleyip tut bunu. hash, crypto
 
             HttpContext.Response.Cookies.Add(cerez); //http isteğine cevap olarak göndermen lazım!
             #endregion
+
             return View();
         }
 
@@ -56,12 +55,12 @@ namespace exp_6_StateManagement.Controllers
         {
             #region Tarayıcıdan cookie bilgisini alma
 
-            var gelenCerez = HttpContext.Request.Cookies["loginBilgileri"]; //cokies.get("")
+            var gelenCerez = HttpContext.Request.Cookies["loginBilgileri"]; // Cookies.Get("loginBilgileri") diye metot şeklinde de yazabilirsin.
 
             if (gelenCerez != null)
             {
                 var userName = gelenCerez.Values.Get("kullaniciAdi");
-                var password = gelenCerez.Values["parola"];  //indexiyle değil adıyla çekmen daha iyi. [1] yerine ["parola"] gibi...
+                var password = gelenCerez.Values["parola"]; //Index'iyle değil adıyla çekmen daha iyi (gelenCerez.Values[1] yerine Values["parola"] )
             }
             #endregion
             return View();
@@ -122,6 +121,7 @@ namespace exp_6_StateManagement.Controllers
             // bir değerin application'a set edilmesi
             HttpContext.Application.Add("ziyaretciSayisi", 0);
             HttpContext.Application["VersiyonBilgisi", "v.1.0.1"];
+
             // değerin application'dan alınması
             var ziyaretciSayisi = HttpContext.Application["ziyaretciSayisi"];
            

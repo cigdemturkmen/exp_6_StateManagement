@@ -22,7 +22,7 @@ namespace exp_6_StateManagement.Controllers
             return RedirectToAction("OturumAc", "Home"); // ("Login", "Auth"); Autcontroller içindeki login'e yönlendir.
         }
 
-        public ActionResult UrunEkle() // Actiona girmeden önce oturum var mı yok mu diye kontrol edip sonra sayfayı açtırma işini FİLTER ile yapabiliriz.
+        public ActionResult UrunEkle() // Actiona girmeden önce oturum var mı yok mu diye kontrol edip sonra sayfayı açtırma işini if yerine FİLTERlar ile yapabiliriz.
         {
             var mevcutKullaniciSession = Session["Kullanici"];
 
